@@ -5,9 +5,13 @@ import org.itheima.kotlin.game.core.Painter
 /**
  * Created by zhangshengli on 2017/11/16.
  */
-class Tank : BaseModel() {
-    override fun draw(direction: Direction) {
+class Tank(override var x: Int, override var y: Int) : BaseModel() {
+    fun draw(direction: Direction) {
         Painter.drawImage(getPath(direction), x, y)
+    }
+
+    override fun draw() {
+        Painter.drawImage(getPath(Direction.UP), x, y)
     }
 
     fun getPath(direction: Direction) =
