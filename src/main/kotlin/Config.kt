@@ -3,4 +3,5 @@
  */
 object Config {
     val BLOCK = 64
+    val GAMEWIDTH = BLOCK*13
 }
