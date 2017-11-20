@@ -1,11 +1,32 @@
 package model
 
+import interfaces.Blockable
+import interfaces.Moveable
 import org.itheima.kotlin.game.core.Painter
 
 /**
  * Created by zhangshengli on 2017/11/16.
  */
-class Tank(override var x: Int, override var y: Int) : BaseModel() {
+class Tank(override var x: Int, override var y: Int, override var width: Int=Config.BLOCK, override var height: Int = Config.BLOCK) : Moveable {
+    override fun isWillCllision(blockable: Blockable): Boolean {
+        var x = this.x
+        var y = this.y
+        when(direction){
+            Direction.UP->y-=speed
+            Direction.DOWN->y+=speed
+            Direction.LEFT->x-=speed
+            Direction.RIGHT->x+=speed
+        }
+
+        return when {
+            blockable.x+blockable.width<=x -> false
+            x+width<=blockable.x -> false
+            blockable.y+blockable.width<=y -> false
+            y+width<=blockable.y -> false
+            else -> true
+        }
+    }
+
     var direction:Direction = Direction.UP
     var speed = 8
 
