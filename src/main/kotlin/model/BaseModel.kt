@@ -1,6 +1,7 @@
 package model
 
 import interfaces.View
+import manager.Config
 
 /**
  * Created by zhangshengli on 2017/11/16.
