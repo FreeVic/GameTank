@@ -65,5 +65,15 @@ class Tank(override var x: Int, override var y: Int, override var width: Int = C
         if (y > Config.GAMEWIDTH) y = Config.GAMEWIDTH
     }
 
-    fun shot():Bullet = Bullet(x, y)
+    fun shot():Bullet{
+            return Bullet(0,0,0,0,direction){dir,bWidth, bHeight->
+                var result:Pair<Int,Int> = Pair(0,0)
+                when(dir){
+                    Direction.UP->{
+                        result= Pair(x+(width-bWidth)/2,y-bHeight/2)
+                    }
+                }
+                result
+            }
+    }
 }
