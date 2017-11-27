@@ -60,9 +60,9 @@ class Tank(override var x: Int, override var y: Int, override var width: Int = C
             }
         }
         if (x < 0) x = 0
-        if (x > Config.GAMEWIDTH) x= Config.GAMEWIDTH
+        if (x > Config.GAMEWIDTH-width) x= Config.GAMEWIDTH-width
         if (y < 0) y = 0
-        if (y > Config.GAMEWIDTH) y = Config.GAMEWIDTH
+        if (y > Config.GAMEWIDTH-width) y = Config.GAMEWIDTH-width
     }
 
     fun shot():Bullet{
@@ -71,6 +71,15 @@ class Tank(override var x: Int, override var y: Int, override var width: Int = C
                 when(dir){
                     Direction.UP->{
                         result= Pair(x+(width-bWidth)/2,y-bHeight/2)
+                    }
+                    Direction.DOWN->{
+                        result = Pair(x+(width-bWidth)/2,y+bHeight/2)
+                    }
+                    Direction.LEFT->{
+                        result = Pair(x-bWidth/2,y+(height-bHeight)/2)
+                    }
+                    Direction.RIGHT ->{
+                        result = Pair(x+bWidth/2,y+(height-bHeight)/2)
                     }
                 }
                 result

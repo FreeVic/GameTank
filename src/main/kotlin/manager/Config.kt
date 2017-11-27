@@ -5,5 +5,5 @@ package manager
  */
 object Config {
     val BLOCK = 64
-    val GAMEWIDTH = BLOCK *12
+    val GAMEWIDTH = BLOCK *13
 }

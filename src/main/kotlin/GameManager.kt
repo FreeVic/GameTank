@@ -1,4 +1,6 @@
+import interfaces.AutoMoveable
 import interfaces.Blockable
+import interfaces.Destroyedable
 import interfaces.View
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
@@ -30,6 +32,18 @@ object GameManager {
 
     fun disPlay() {
         list.forEach { it.draw() }
+        // remove Destroyed view
+        list.filter { it is Destroyedable }.forEach {
+            it as Destroyedable
+            if(it.isDestroyed())
+                list.remove(it)
+        }
+
+        // autoMove
+        list.filter { it is AutoMoveable }.forEach {
+            it as AutoMoveable
+            it.autoMove()
+        }
         tank.draw()
     }
 

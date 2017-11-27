@@ -3,7 +3,7 @@ package manager
 import javafx.scene.input.KeyEvent
 import org.itheima.kotlin.game.core.Window
 
-class MyWindow : Window("小坦坦", "img/tank_u.gif", Config.BLOCK*13, Config.BLOCK*13) {
+class MyWindow : Window("小坦坦", "img/tank_u.gif", Config.GAMEWIDTH, Config.GAMEWIDTH) {
 
     override fun onCreate() {
         GameManager.create()
