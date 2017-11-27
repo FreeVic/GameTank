@@ -27,11 +27,11 @@ class Tank(override var x: Int, override var y: Int, override var width: Int = C
         }
 
         return when {
-            blockable.x + blockable.width <= x -> Direction.LEFT
-            x + width <= blockable.x -> Direction.RIGHT
-            blockable.y + blockable.width <= y -> Direction.UP
-            y + width <= blockable.y -> Direction.DOWN
-            else -> null
+            blockable.x + blockable.width <= x -> null
+            x + width <= blockable.x -> null
+            blockable.y + blockable.width <= y -> null
+            y + width <= blockable.y -> null
+            else -> direction
         }
     }
 
