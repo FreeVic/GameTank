@@ -1,4 +1,8 @@
 package model
 
-interface Attactable {
+import interfaces.View
+
+interface Attackable :View{
+    var attackPower:Int
+    fun notifyAttack(sufferable: Sufferable)
 }

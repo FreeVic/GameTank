@@ -3,7 +3,6 @@ package model
 import interfaces.Blockable
 import interfaces.Moveable
 import manager.Config
-import GameManager
 import org.itheima.kotlin.game.core.Painter
 
 /**

@@ -1,4 +1,9 @@
 package model
 
-interface Sufferable {
+import interfaces.View
+
+
+interface Sufferable: View {
+    var blood:Int
+    fun notifySuffer(attackable: Attackable)
 }

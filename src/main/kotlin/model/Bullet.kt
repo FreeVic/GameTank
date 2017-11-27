@@ -6,7 +6,14 @@ import interfaces.View
 import manager.Config
 import org.itheima.kotlin.game.core.Painter
 
-class Bullet(override var x: Int, override var y: Int, override var width: Int, override var height: Int, var direction: Direction, create: (dir: Direction, bWidth: Int, bHeight: Int) -> Pair<Int, Int>) : View, AutoMoveable, Destroyedable {
+class Bullet(override var x: Int, override var y: Int, override var width: Int, override var height: Int, var direction: Direction, create: (dir: Direction, bWidth: Int, bHeight: Int) -> Pair<Int, Int>) : AutoMoveable, Destroyedable,Attackable {
+    override var attackPower: Int = 2
+    override var isDestroy: Boolean = false
+    override fun notifyAttack(sufferable: Sufferable) {
+        isDestroy = true
+        println("bullet attack ${sufferable.x}:${sufferable.y}")
+    }
+
     override fun autoMove() {
         when (currentDirection) {
             Direction.UP -> y -= speed
@@ -23,7 +30,11 @@ class Bullet(override var x: Int, override var y: Int, override var width: Int, 
         get() = 8
         set(value) {}
 
-    override fun isDestroyed(): Boolean = x < 0 || x > Config.GAMEWIDTH || y < 0 || y > Config.GAMEWIDTH
+    override fun isDestroyed(): Boolean {
+        if(isDestroy)
+            return true
+        return x < 0 || x > Config.GAMEWIDTH || y < 0 || y > Config.GAMEWIDTH
+    }
 
     init {
         val size = Painter.size(getPath())

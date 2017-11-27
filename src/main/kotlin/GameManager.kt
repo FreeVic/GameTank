@@ -1,3 +1,4 @@
+import ext.isWillCollision
 import interfaces.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
@@ -31,7 +32,7 @@ object GameManager {
     fun disPlay() {
         list.forEach { it.draw() }
 
-        // checkCollision
+        // checkCollision of moveable
         var badDirection:Direction? = null
         var badBlock:Blockable? = null
         list.filter { it is Moveable }.forEach { move ->
@@ -48,7 +49,20 @@ object GameManager {
             move.notifyCollision(badDirection,badBlock)
         }
 
+        // check attack
+        list.filter { it is Attackable }.forEach attackTag@{ attack->
+            attack as Attackable
+            list.filter { it is Sufferable }.forEach sufferTag@{suffer->
+                suffer as Sufferable
+                val result = attack.isWillCollision(suffer)
+                if(result){
+                    attack.notifyAttack(suffer)
+                    suffer.notifySuffer(attack)
+                    return@attackTag
+                }
+            }
 
+        }
 
         // remove Destroyed view
             list.filter { it is Destroyedable }.forEach {
