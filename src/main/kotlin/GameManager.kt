@@ -1,7 +1,4 @@
-import interfaces.AutoMoveable
-import interfaces.Blockable
-import interfaces.Destroyedable
-import interfaces.View
+import interfaces.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import manager.Config
@@ -16,6 +13,7 @@ object GameManager {
     fun create() {
         tank = Tank(0, 0)
         list = CopyOnWriteArrayList()
+        list.add(tank)
         val file = File(javaClass.getResource("map/1.map").path)
         file.readLines().forEachIndexed { indexY, line ->
             println("$indexY:$line")
@@ -32,19 +30,42 @@ object GameManager {
 
     fun disPlay() {
         list.forEach { it.draw() }
-        // remove Destroyed view
-        list.filter { it is Destroyedable }.forEach {
-            it as Destroyedable
-            if(it.isDestroyed())
-                list.remove(it)
+
+        // checkCollision
+        var badDirection:Direction? = null
+        var badBlock:Blockable? = null
+        list.filter { it is Moveable }.forEach { move ->
+            move as Moveable
+            list.filter { it is Blockable }.forEach blockTag@{ block ->
+                block as Blockable
+                val result = move.isWillCollision(block)
+                result?.let {
+                    badDirection = result
+                    badBlock = block
+                    return@blockTag
+                }
+            }
+            move.notifyCollision(badDirection,badBlock)
         }
 
-        // autoMove
-        list.filter { it is AutoMoveable }.forEach {
-            it as AutoMoveable
-            it.autoMove()
-        }
-        tank.draw()
+
+
+        // remove Destroyed view
+            list.filter { it is Destroyedable }.forEach {
+                it as Destroyedable
+                if (it.isDestroyed())
+                    list.remove(it)
+            }
+
+            // autoMove
+            list.filter { it is AutoMoveable }.forEach {
+                it as AutoMoveable
+                it.autoMove()
+            }
+    }
+
+    fun gameLogic(){
+
     }
 
     fun onKeyEvent(event: KeyEvent) {
@@ -55,17 +76,5 @@ object GameManager {
             KeyCode.D -> tank.move(Direction.RIGHT)
             KeyCode.ENTER -> list.add(tank.shot())
         }
-    }
-
-    fun checkCollision(tank: Tank): Boolean {
-        // check collision
-        var isWillCollision = false
-        list.filter { it is Blockable }.forEach {
-            it as Blockable
-            if (tank.isWillCllision(it)) {
-                isWillCollision = true
-            }
-        }
-        return isWillCollision
     }
 }

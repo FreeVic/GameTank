@@ -10,9 +10,15 @@ import org.itheima.kotlin.game.core.Painter
  * Created by zhangshengli on 2017/11/16.
  */
 class Tank(override var x: Int, override var y: Int, override var width: Int = Config.BLOCK, override var height: Int = Config.BLOCK) : Moveable {
-    override fun isWillCllision(blockable: Blockable): Boolean {
+    var badDirection: Direction? = null
+    override fun notifyCollision(badDirection: Direction?, badBlock: Blockable?) {
+        this.badDirection = badDirection
+    }
+
+    override fun isWillCollision(blockable: Blockable): Direction? {
         var x = this.x
         var y = this.y
+
         when (direction) {
             Direction.UP -> y -= speed
             Direction.DOWN -> y += speed
@@ -21,11 +27,11 @@ class Tank(override var x: Int, override var y: Int, override var width: Int = C
         }
 
         return when {
-            blockable.x + blockable.width <= x -> false
-            x + width <= blockable.x -> false
-            blockable.y + blockable.width <= y -> false
-            y + width <= blockable.y -> false
-            else -> true
+            blockable.x + blockable.width <= x -> Direction.LEFT
+            x + width <= blockable.x -> Direction.RIGHT
+            blockable.y + blockable.width <= y -> Direction.UP
+            y + width <= blockable.y -> Direction.DOWN
+            else -> null
         }
     }
 
@@ -45,44 +51,44 @@ class Tank(override var x: Int, override var y: Int, override var width: Int = C
             }
 
     fun move(outDir: Direction) {
-        // check same direction
-        if (direction != outDir) {
+        if(outDir != direction){
             direction = outDir
-            return
-        }
-        // check collision
-        if (!GameManager.checkCollision(this)) {
+        }else{
+            if (badDirection == direction) {
+                return
+            }
             when (outDir) {
                 Direction.UP -> y -= speed
                 Direction.DOWN -> y += speed
                 Direction.LEFT -> x -= speed
                 Direction.RIGHT -> x += speed
             }
+            // check boundry
+            if (x < 0) x = 0
+            if (x > Config.GAMEWIDTH - width) x = Config.GAMEWIDTH - width
+            if (y < 0) y = 0
+            if (y > Config.GAMEWIDTH - width) y = Config.GAMEWIDTH - width
         }
-        if (x < 0) x = 0
-        if (x > Config.GAMEWIDTH-width) x= Config.GAMEWIDTH-width
-        if (y < 0) y = 0
-        if (y > Config.GAMEWIDTH-width) y = Config.GAMEWIDTH-width
     }
 
-    fun shot():Bullet{
-            return Bullet(0,0,0,0,direction){dir,bWidth, bHeight->
-                var result:Pair<Int,Int> = Pair(0,0)
-                when(dir){
-                    Direction.UP->{
-                        result= Pair(x+(width-bWidth)/2,y-bHeight/2)
-                    }
-                    Direction.DOWN->{
-                        result = Pair(x+(width-bWidth)/2,y+bHeight/2)
-                    }
-                    Direction.LEFT->{
-                        result = Pair(x-bWidth/2,y+(height-bHeight)/2)
-                    }
-                    Direction.RIGHT ->{
-                        result = Pair(x+bWidth/2,y+(height-bHeight)/2)
-                    }
+    fun shot(): Bullet {
+        return Bullet(0, 0, 0, 0, direction) { dir, bWidth, bHeight ->
+            var result: Pair<Int, Int> = Pair(0, 0)
+            when (dir) {
+                Direction.UP -> {
+                    result = Pair(x + (width - bWidth) / 2, y - bHeight / 2)
                 }
-                result
+                Direction.DOWN -> {
+                    result = Pair(x + (width - bWidth) / 2, y + bHeight / 2)
+                }
+                Direction.LEFT -> {
+                    result = Pair(x - bWidth / 2, y + (height - bHeight) / 2)
+                }
+                Direction.RIGHT -> {
+                    result = Pair(x + bWidth / 2, y + (height - bHeight) / 2)
+                }
             }
+            result
+        }
     }
 }

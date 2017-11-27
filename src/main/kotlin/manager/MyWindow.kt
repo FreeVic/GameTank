@@ -21,5 +21,6 @@ class MyWindow : Window("小坦坦", "img/tank_u.gif", Config.GAMEWIDTH, Config.
 
 
     override fun onRefresh() {
+        GameManager.gameLogic()
     }
 }
