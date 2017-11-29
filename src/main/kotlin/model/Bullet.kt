@@ -6,7 +6,7 @@ import interfaces.View
 import manager.Config
 import org.itheima.kotlin.game.core.Painter
 
-class Bullet(override var x: Int, override var y: Int, override var width: Int, override var height: Int, var direction: Direction, create: (dir: Direction, bWidth: Int, bHeight: Int) -> Pair<Int, Int>) : AutoMoveable, Destroyedable,Attackable {
+class Bullet(override var x: Int, override var y: Int, override var width: Int, override var height: Int, var direction: Direction, create: (dir: Direction, bWidth: Int, bHeight: Int) -> Pair<Int, Int>) : AutoMoveable, Destroyedable, Attackable {
     override var attackPower: Int = 2
     override var isDestroy: Boolean = false
     override fun notifyAttack(sufferable: Sufferable) {
@@ -23,15 +23,11 @@ class Bullet(override var x: Int, override var y: Int, override var width: Int, 
         }
     }
 
-    override var currentDirection: Direction
-        get() = direction
-        set(value) {}
-    override var speed: Int
-        get() = 8
-        set(value) {}
+    override var currentDirection = direction
+    override var speed = 8
 
     override fun isDestroyed(): Boolean {
-        if(isDestroy)
+        if (isDestroy)
             return true
         return x < 0 || x > Config.GAMEWIDTH || y < 0 || y > Config.GAMEWIDTH
     }

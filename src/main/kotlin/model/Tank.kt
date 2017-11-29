@@ -41,7 +41,7 @@ class Tank(override var x: Int, override var y: Int, override var width: Int = C
         Painter.drawImage(getPath(direction), x, y)
     }
 
-    fun getPath(direction: Direction) =
+    private fun getPath(direction: Direction) =
             when (direction) {
                 Direction.UP -> "img/tank_u.gif"
                 Direction.DOWN -> "img/tank_d.gif"

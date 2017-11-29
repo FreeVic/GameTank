@@ -33,11 +33,11 @@ object GameManager {
         list.forEach { it.draw() }
 
         // checkCollision of moveable
-        var badDirection:Direction? = null
-        var badBlock:Blockable? = null
+        var badDirection: Direction? = null
+        var badBlock: Blockable? = null
         list.filter { it is Moveable }.forEach { move ->
             move as Moveable
-            list.filter { it is Blockable }.forEach blockTag@{ block ->
+            list.filter { it is Blockable }.forEach blockTag@ { block ->
                 block as Blockable
                 val result = move.isWillCollision(block)
                 result?.let {
@@ -46,18 +46,21 @@ object GameManager {
                     return@blockTag
                 }
             }
-            move.notifyCollision(badDirection,badBlock)
+            move.notifyCollision(badDirection, badBlock)
         }
 
         // check attack
-        list.filter { it is Attackable }.forEach attackTag@{ attack->
+        list.filter { it is Attackable }.forEach attackTag@ { attack ->
             attack as Attackable
-            list.filter { it is Sufferable }.forEach sufferTag@{suffer->
+            list.filter { it is Sufferable }.forEach sufferTag@ { suffer ->
                 suffer as Sufferable
                 val result = attack.isWillCollision(suffer)
-                if(result){
+                if (result) {
                     attack.notifyAttack(suffer)
-                    suffer.notifySuffer(attack)
+                    val blasts = suffer.notifySuffer(attack)
+                    blasts?.let{
+                        list.addAll(blasts)
+                    }
                     return@attackTag
                 }
             }
@@ -65,20 +68,20 @@ object GameManager {
         }
 
         // remove Destroyed view
-            list.filter { it is Destroyedable }.forEach {
-                it as Destroyedable
-                if (it.isDestroyed())
-                    list.remove(it)
-            }
+        list.filter { it is Destroyedable }.forEach {
+            it as Destroyedable
+            if (it.isDestroyed())
+                list.remove(it)
+        }
 
-            // autoMove
-            list.filter { it is AutoMoveable }.forEach {
-                it as AutoMoveable
-                it.autoMove()
-            }
+        // autoMove
+        list.filter { it is AutoMoveable }.forEach {
+            it as AutoMoveable
+            it.autoMove()
+        }
     }
 
-    fun gameLogic(){
+    fun gameLogic() {
 
     }
 
