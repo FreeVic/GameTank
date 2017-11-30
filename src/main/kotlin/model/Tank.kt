@@ -9,36 +9,15 @@ import org.itheima.kotlin.game.core.Painter
  * Created by zhangshengli on 2017/11/16.
  */
 class Tank(override var x: Int, override var y: Int, override var width: Int = Config.BLOCK, override var height: Int = Config.BLOCK) : Moveable {
-    var badDirection: Direction? = null
+    override var currentDirection: Direction = Direction.UP
+    override var badDirection: Direction? = null
     override fun notifyCollision(badDirection: Direction?, badBlock: Blockable?) {
         this.badDirection = badDirection
     }
-
-    override fun isWillCollision(blockable: Blockable): Direction? {
-        var x = this.x
-        var y = this.y
-
-        when (direction) {
-            Direction.UP -> y -= speed
-            Direction.DOWN -> y += speed
-            Direction.LEFT -> x -= speed
-            Direction.RIGHT -> x += speed
-        }
-
-        return when {
-            blockable.x + blockable.width <= x -> null
-            x + width <= blockable.x -> null
-            blockable.y + blockable.width <= y -> null
-            y + width <= blockable.y -> null
-            else -> direction
-        }
-    }
-
-    var direction: Direction = Direction.UP
-    var speed = 8
+    override var speed = 8
 
     override fun draw() {
-        Painter.drawImage(getPath(direction), x, y)
+        Painter.drawImage(getPath(currentDirection), x, y)
     }
 
     private fun getPath(direction: Direction) =
@@ -50,10 +29,10 @@ class Tank(override var x: Int, override var y: Int, override var width: Int = C
             }
 
     fun move(outDir: Direction) {
-        if(outDir != direction){
-            direction = outDir
+        if(outDir != currentDirection){
+            currentDirection = outDir
         }else{
-            if (badDirection == direction) {
+            if (badDirection == currentDirection) {
                 return
             }
             when (outDir) {
@@ -71,7 +50,7 @@ class Tank(override var x: Int, override var y: Int, override var width: Int = C
     }
 
     fun shot(): Bullet {
-        return Bullet(0, 0, 0, 0, direction) { dir, bWidth, bHeight ->
+        return Bullet(0, 0, 0, 0, currentDirection) { dir, bWidth, bHeight ->
             var result: Pair<Int, Int> = Pair(0, 0)
             when (dir) {
                 Direction.UP -> {

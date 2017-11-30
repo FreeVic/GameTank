@@ -12,9 +12,7 @@ object GameManager {
     lateinit var tank: Tank
     lateinit var list: CopyOnWriteArrayList<View>
     fun create() {
-        tank = Tank(0, 0)
         list = CopyOnWriteArrayList()
-        list.add(tank)
         val file = File(javaClass.getResource("map/1.map").path)
         file.readLines().forEachIndexed { indexY, line ->
             println("$indexY:$line")
@@ -24,6 +22,11 @@ object GameManager {
                     '砖' -> list.add(Wall(indexX * Config.BLOCK, indexY * Config.BLOCK))
                     '水' -> list.add(Water(indexX * Config.BLOCK, indexY * Config.BLOCK))
                     '草' -> list.add(Grass(indexX * Config.BLOCK, indexY * Config.BLOCK))
+                    '敌'-> list.add(Enemy(indexX * Config.BLOCK, indexY * Config.BLOCK))
+                    '我'->{
+                        tank = Tank(indexX * Config.BLOCK, indexY * Config.BLOCK)
+                        list.add(tank)
+                    }
                 }
             }
         }
@@ -37,7 +40,7 @@ object GameManager {
         var badBlock: Blockable? = null
         list.filter { it is Moveable }.forEach { move ->
             move as Moveable
-            list.filter { it is Blockable }.forEach blockTag@ { block ->
+            list.filter { it is Blockable && move!=it }.forEach blockTag@ { block ->
                 block as Blockable
                 val result = move.isWillCollision(block)
                 result?.let {
@@ -49,7 +52,7 @@ object GameManager {
             move.notifyCollision(badDirection, badBlock)
         }
 
-        // check attack
+        // check collision of attack
         list.filter { it is Attackable }.forEach attackTag@ { attack ->
             attack as Attackable
             list.filter { it is Sufferable }.forEach sufferTag@ { suffer ->
@@ -78,6 +81,14 @@ object GameManager {
         list.filter { it is AutoMoveable }.forEach {
             it as AutoMoveable
             it.autoMove()
+        }
+
+        // autoShot
+        list.filter { it is AutoShot }.forEach {
+            it as AutoShot
+            it.autoShot()?.let {
+                list.add(it)
+            }
         }
     }
 
