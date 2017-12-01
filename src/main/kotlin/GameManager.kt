@@ -55,7 +55,7 @@ object GameManager {
         // check collision of attack
         list.filter { it is Attackable }.forEach attackTag@ { attack ->
             attack as Attackable
-            list.filter { it is Sufferable }.forEach sufferTag@ { suffer ->
+            list.filter { (it is Sufferable) and(attack.ower!=it) }.forEach sufferTag@ { suffer ->
                 suffer as Sufferable
                 val result = attack.isWillCollision(suffer)
                 if (result) {

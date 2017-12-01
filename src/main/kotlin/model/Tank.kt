@@ -1,6 +1,7 @@
 package model
 
 import interfaces.Blockable
+import interfaces.Destroyedable
 import interfaces.Moveable
 import manager.Config
 import org.itheima.kotlin.game.core.Painter
@@ -8,7 +9,11 @@ import org.itheima.kotlin.game.core.Painter
 /**
  * Created by zhangshengli on 2017/11/16.
  */
-class Tank(override var x: Int, override var y: Int, override var width: Int = Config.BLOCK, override var height: Int = Config.BLOCK) : Moveable {
+class Tank(override var x: Int, override var y: Int, override var width: Int = Config.BLOCK, override var height: Int = Config.BLOCK) : Moveable,Blockable,Destroyedable {
+    override var isDestroy: Boolean = false
+
+    override fun isDestroyed(): Boolean = false
+
     override var currentDirection: Direction = Direction.UP
     override var badDirection: Direction? = null
     override fun notifyCollision(badDirection: Direction?, badBlock: Blockable?) {
@@ -50,7 +55,7 @@ class Tank(override var x: Int, override var y: Int, override var width: Int = C
     }
 
     fun shot(): Bullet {
-        return Bullet(0, 0, 0, 0, currentDirection) { dir, bWidth, bHeight ->
+        return Bullet(this,0, 0, 0, 0, currentDirection) { dir, bWidth, bHeight ->
             var result: Pair<Int, Int> = Pair(0, 0)
             when (dir) {
                 Direction.UP -> {

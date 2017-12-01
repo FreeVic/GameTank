@@ -5,13 +5,31 @@ import manager.Config
 import org.itheima.kotlin.game.core.Painter
 import java.util.*
 
-class Enemy(override var x: Int, override var y: Int) : View, Moveable, Blockable, AutoMoveable, AutoShot {
+class Enemy(override var x: Int, override var y: Int) : View, Moveable, Blockable, AutoMoveable, AutoShot,Attackable,Sufferable,Destroyedable {
+    override var isDestroy: Boolean = false
+
+    override fun isDestroyed(): Boolean = blood<=0
+
+    override var ower: View = this
     override var badDirection: Direction? = null
     override var speed: Int = 8
     override var width: Int = Config.BLOCK
     override var height: Int = Config.BLOCK
     override var currentDirection: Direction = Direction.DOWN
+    override var attackPower: Int = 1
+    override var blood: Int = 3
 
+    override fun notifyAttack(sufferable: Sufferable) {
+
+    }
+    override fun notifySuffer(attackable: Attackable): Array<View>? {
+        if(attackable.ower is Enemy){
+            return null
+        }else{
+            blood-=attackable.attackPower
+            return arrayOf(Blast(x,y))
+        }
+    }
     override fun draw() {
         Painter.drawImage(getPath(currentDirection), x, y)
     }
@@ -58,7 +76,7 @@ class Enemy(override var x: Int, override var y: Int) : View, Moveable, Blockabl
     override fun autoShot(): View? {
         if(isFastShot())
             return null
-        return Bullet(0, 0, 0, 0, currentDirection) { dir, bWidth, bHeight ->
+        return Bullet(this,0, 0, 0, 0, currentDirection) { dir, bWidth, bHeight ->
             var result: Pair<Int, Int> = Pair(0, 0)
             when (dir) {
                 Direction.UP -> {
