@@ -4,6 +4,7 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import manager.Config
 import model.*
+import org.itheima.kotlin.game.core.Composer
 import java.io.File
 import java.util.ArrayList
 import java.util.concurrent.CopyOnWriteArrayList
@@ -23,9 +24,6 @@ object GameManager {
                     '水' -> list.add(Water(indexX * Config.BLOCK, indexY * Config.BLOCK))
                     '草' -> list.add(Grass(indexX * Config.BLOCK, indexY * Config.BLOCK))
                     '敌'-> list.add(Enemy(indexX * Config.BLOCK, indexY * Config.BLOCK))
-                    '我'->{
-
-                    }
                 }
             }
         }
@@ -33,6 +31,7 @@ object GameManager {
         list.add(tank)
 
         list.add(Camp())
+        Composer.playLoop("snd/bg3.wav")
     }
 
     fun disPlay() {
