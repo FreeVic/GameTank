@@ -24,12 +24,15 @@ object GameManager {
                     '草' -> list.add(Grass(indexX * Config.BLOCK, indexY * Config.BLOCK))
                     '敌'-> list.add(Enemy(indexX * Config.BLOCK, indexY * Config.BLOCK))
                     '我'->{
-                        tank = Tank(indexX * Config.BLOCK, indexY * Config.BLOCK)
-                        list.add(tank)
+
                     }
                 }
             }
         }
+        tank = Tank(Config.BLOCK*4, Config.GAMEWIDTH-Config.BLOCK)
+        list.add(tank)
+
+        list.add(Camp())
     }
 
     fun disPlay() {
