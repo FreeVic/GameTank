@@ -6,9 +6,21 @@ import interfaces.View
 import manager.Config
 import org.itheima.kotlin.game.core.Painter
 
-class Bullet( override var ower: View,override var x: Int, override var y: Int, override var width: Int, override var height: Int, var direction: Direction, create: (dir: Direction, bWidth: Int, bHeight: Int) -> Pair<Int, Int>) : AutoMoveable, Destroyedable, Attackable {
+class Bullet(override var ower: View, override var x: Int, override var y: Int, override var width: Int, override var height: Int, var direction: Direction, create: (dir: Direction, bWidth: Int, bHeight: Int) -> Pair<Int, Int>) : AutoMoveable, Destroyedable, Attackable {
     override var attackPower: Int = 2
     override var isDestroy: Boolean = false
+    override var currentDirection = direction
+    override var speed = 8
+
+    init {
+        val size = Painter.size(getPath())
+        width = size[0]
+        height = size[1]
+        val invoke = create(direction, width, height)
+        x = invoke.first
+        y = invoke.second
+    }
+
     override fun notifyAttack(sufferable: Sufferable) {
         isDestroy = true
         println("bullet attack ${sufferable.x}:${sufferable.y}")
@@ -23,22 +35,12 @@ class Bullet( override var ower: View,override var x: Int, override var y: Int, 
         }
     }
 
-    override var currentDirection = direction
-    override var speed = 8
+
 
     override fun isDestroyed(): Boolean {
         if (isDestroy)
             return true
         return x < 0 || x > Config.GAMEWIDTH || y < 0 || y > Config.GAMEWIDTH
-    }
-
-    init {
-        val size = Painter.size(getPath())
-        width = size[0]
-        height = size[1]
-        val invoke = create(direction, width, height)
-        x = invoke.first
-        y = invoke.second
     }
 
     fun getPath() = when (direction) {
