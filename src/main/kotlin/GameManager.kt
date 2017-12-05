@@ -12,18 +12,22 @@ import java.util.concurrent.CopyOnWriteArrayList
 object GameManager {
     lateinit var tank: Tank
     lateinit var list: CopyOnWriteArrayList<View>
+    var maxEnemyCount = 20
+    var activeEnemyCount = 6
+    var enemyBornPos:ArrayList<Pair<Int,Int>> = ArrayList()
+    var enemyIndex = 0
+    var isGameOver = false
     fun create() {
         list = CopyOnWriteArrayList()
         val file = File(javaClass.getResource("map/1.map").path)
         file.readLines().forEachIndexed { indexY, line ->
-            println("$indexY:$line")
             line.toCharArray().forEachIndexed { indexX, char ->
                 when (char) {
                     '铁' -> list.add(Steel(indexX * Config.BLOCK, indexY * Config.BLOCK))
                     '砖' -> list.add(Wall(indexX * Config.BLOCK, indexY * Config.BLOCK))
                     '水' -> list.add(Water(indexX * Config.BLOCK, indexY * Config.BLOCK))
                     '草' -> list.add(Grass(indexX * Config.BLOCK, indexY * Config.BLOCK))
-                    '敌' -> list.add(Enemy(indexX * Config.BLOCK, indexY * Config.BLOCK))
+                    '敌' -> enemyBornPos.add(Pair(indexX * Config.BLOCK, indexY * Config.BLOCK))
                 }
             }
         }
@@ -31,6 +35,7 @@ object GameManager {
         list.add(tank)
 
         list.add(Camp())
+
         Composer.playLoop("snd/bg3.wav")
     }
 
@@ -43,6 +48,9 @@ object GameManager {
             if (it.isDestroyed())
                 list.remove(it)
         }
+
+        if(isGameOver)
+            return
 
         // checkCollision of moveable
         var badDirection: Direction? = null
@@ -64,7 +72,7 @@ object GameManager {
         // check collision of attack
         list.filter { it is Attackable }.forEach attackTag@ { attack ->
             attack as Attackable
-            list.filter { (it is Sufferable) and (attack.ower != it) and (attack != it) }.forEach sufferTag@ { suffer ->
+            list.filter { (it is Sufferable) and (attack.ower != it) and (attack != it) and !(it is Attackable && attack.ower==it.ower) }.forEach sufferTag@ { suffer ->
                 suffer as Sufferable
                 if (attack.isWillCollision(suffer)) {
                     attack.notifyAttack(suffer)
@@ -91,6 +99,18 @@ object GameManager {
                 list.add(it)
             }
         }
+
+        // enemy auto generate
+        if((list.filter { it is Enemy }.size < activeEnemyCount) and (maxEnemyCount > 0)){
+            val index = enemyIndex%enemyBornPos.size
+            list.add(Enemy(enemyBornPos[index].first,enemyBornPos[index].second))
+            maxEnemyCount--
+            enemyIndex++
+        }
+
+        // check GameOver
+        isGameOver = list.none { it is Camp }
+        isGameOver = (maxEnemyCount == 0) && list.none{ it is Enemy}
     }
 
     fun gameLogic() {
@@ -98,6 +118,8 @@ object GameManager {
     }
 
     fun onKeyEvent(event: KeyEvent) {
+        if(isGameOver)
+            return
         when (event.code) {
             KeyCode.W -> tank.move(Direction.UP)
             KeyCode.S -> tank.move(Direction.DOWN)

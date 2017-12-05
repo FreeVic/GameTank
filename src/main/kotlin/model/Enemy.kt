@@ -10,18 +10,13 @@ class Enemy(override var x: Int, override var y: Int) : View, Moveable, Blockabl
 
     override fun isDestroyed(): Boolean = blood<=0
 
-    override var ower: View = this
     override var badDirection: Direction? = null
     override var speed: Int = 8
     override var width: Int = Config.BLOCK
     override var height: Int = Config.BLOCK
     override var currentDirection: Direction = Direction.DOWN
-    override var attackPower: Int = 1
     override var blood: Int = 3
 
-    override fun notifyAttack(sufferable: Sufferable) {
-
-    }
     override fun notifySuffer(attackable: Attackable): Array<View>? {
         if(attackable.ower is Enemy){
             return null
