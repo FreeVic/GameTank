@@ -23,11 +23,11 @@ object GameManager {
                     '砖' -> list.add(Wall(indexX * Config.BLOCK, indexY * Config.BLOCK))
                     '水' -> list.add(Water(indexX * Config.BLOCK, indexY * Config.BLOCK))
                     '草' -> list.add(Grass(indexX * Config.BLOCK, indexY * Config.BLOCK))
-                    '敌'-> list.add(Enemy(indexX * Config.BLOCK, indexY * Config.BLOCK))
+                    '敌' -> list.add(Enemy(indexX * Config.BLOCK, indexY * Config.BLOCK))
                 }
             }
         }
-        tank = Tank(Config.BLOCK*4, Config.GAMEWIDTH-Config.BLOCK)
+        tank = Tank(Config.BLOCK * 4, Config.GAMEWIDTH - Config.BLOCK)
         list.add(tank)
 
         list.add(Camp())
@@ -37,12 +37,19 @@ object GameManager {
     fun disPlay() {
         list.forEach { it.draw() }
 
+        // remove Destroyed view
+        list.filter { it is Destroyedable }.forEach {
+            it as Destroyedable
+            if (it.isDestroyed())
+                list.remove(it)
+        }
+
         // checkCollision of moveable
         var badDirection: Direction? = null
         var badBlock: Blockable? = null
         list.filter { it is Moveable }.forEach { move ->
             move as Moveable
-            list.filter { it is Blockable && move!=it }.forEach blockTag@ { block ->
+            list.filter { it is Blockable && move != it }.forEach blockTag@ { block ->
                 block as Blockable
                 val result = move.isWillCollision(block)
                 result?.let {
@@ -57,26 +64,18 @@ object GameManager {
         // check collision of attack
         list.filter { it is Attackable }.forEach attackTag@ { attack ->
             attack as Attackable
-            list.filter { (it is Sufferable) and(attack.ower!=it) }.forEach sufferTag@ { suffer ->
+            list.filter { (it is Sufferable) and (attack.ower != it) and (attack != it) }.forEach sufferTag@ { suffer ->
                 suffer as Sufferable
-                val result = attack.isWillCollision(suffer)
-                if (result) {
+                if (attack.isWillCollision(suffer)) {
                     attack.notifyAttack(suffer)
                     val blasts = suffer.notifySuffer(attack)
-                    blasts?.let{
+                    blasts?.let {
                         list.addAll(blasts)
                     }
                     return@attackTag
                 }
             }
 
-        }
-
-        // remove Destroyed view
-        list.filter { it is Destroyedable }.forEach {
-            it as Destroyedable
-            if (it.isDestroyed())
-                list.remove(it)
         }
 
         // autoMove

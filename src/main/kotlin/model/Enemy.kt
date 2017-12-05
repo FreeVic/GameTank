@@ -5,7 +5,7 @@ import manager.Config
 import org.itheima.kotlin.game.core.Painter
 import java.util.*
 
-class Enemy(override var x: Int, override var y: Int) : View, Moveable, Blockable, AutoMoveable, AutoShot,Attackable,Sufferable,Destroyedable {
+class Enemy(override var x: Int, override var y: Int) : View, Moveable, Blockable, AutoMoveable, AutoShot,Sufferable,Destroyedable {
     override var isDestroy: Boolean = false
 
     override fun isDestroyed(): Boolean = blood<=0
