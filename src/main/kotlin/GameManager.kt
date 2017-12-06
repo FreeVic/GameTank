@@ -5,7 +5,9 @@ import javafx.scene.input.KeyEvent
 import manager.Config
 import model.*
 import org.itheima.kotlin.game.core.Composer
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 import java.util.ArrayList
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -19,8 +21,11 @@ object GameManager {
     var isGameOver = false
     fun create() {
         list = CopyOnWriteArrayList()
-        val file = File(javaClass.getResource("map/1.map").path)
-        file.readLines().forEachIndexed { indexY, line ->
+        // 使用流读取map文件，保证项目打包时可以找到路径
+        val stream = javaClass.getResourceAsStream("map/1.map")
+        // 指定utf-8编码，防止打包运行时解析出错
+        val reader = BufferedReader(InputStreamReader(stream,"utf-8"))
+        reader.readLines().forEachIndexed { indexY, line ->
             line.toCharArray().forEachIndexed { indexX, char ->
                 when (char) {
                     '铁' -> list.add(Steel(indexX * Config.BLOCK, indexY * Config.BLOCK))

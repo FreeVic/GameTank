@@ -20,7 +20,6 @@ class Wall(override var x: Int, override var y: Int, override var width: Int= Co
     override fun notifySuffer(attackable: Attackable):Array<View>? {
         blood-=attackable.attackPower
         Composer.play("snd/fire.wav")
-        println("suffer ${attackable.x}:${attackable.y}")
         return arrayOf(Blast(x,y))
     }
 

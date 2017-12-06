@@ -24,7 +24,6 @@ class Bullet(override var ower: View, override var x: Int, override var y: Int, 
 
     override fun notifyAttack(sufferable: Sufferable) {
         isDestroy = true
-        println("bullet attack ${sufferable.x}:${sufferable.y}")
     }
 
     override fun autoMove() {

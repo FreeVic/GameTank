@@ -94,7 +94,6 @@ class Enemy(override var x: Int, override var y: Int) : View, Moveable, Blockabl
     private fun rdmDirection(): Direction {
         val random = Random()
         val nextInt = random.nextInt(4)
-        println(nextInt)
         return when (nextInt) {
             0 -> Direction.DOWN
             1 -> Direction.LEFT
